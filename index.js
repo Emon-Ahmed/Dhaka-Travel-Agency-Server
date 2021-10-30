@@ -20,36 +20,59 @@ async function run() {
     await client.connect();
     const database = client.db("DhakaTravelAgencyDB");
     const collection = database.collection("tour");
+    const orderCollection = database.collection("orders");
+
     // GET API - View ONE
-    app.get( "/alltour/:id", async(req,res)=>{
-      const id =req.params.id;
-      const query = {_id: ObjectId(id)};
+    app.get("/alltour/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
       const tour = await collection.findOne(query);
       res.send(tour);
-    } )
-    // GET API - View ALL 
-    app.get("/alltour", async(req, res)=>{
+    });
+    // GET API - View ALL
+    app.get("/alltour", async (req, res) => {
       const tourList = collection.find({});
       const allTour = await tourList.toArray();
-      res.send(allTour)
-    })
+      res.send(allTour);
+    });
+    //GET API - MY Order - Admin
+    app.get("/orderlist", async (req, res) => {
+      const orderList = orderCollection.find({});
+      const allOrder = await orderList.toArray();
+      res.send(allOrder);
+    });
+
+    //GET API - MY Order - USer
+    app.get("/orderlist/:email", async (req, res) => {
+      const singleOrder = req.params.email;
+      const order = orderCollection.find({ userEmail: singleOrder });
+      const result = await order.toArray();
+      res.send(result);
+    });
 
     // POST API - Add Tour
     app.post("/addtour", async (req, res) => {
       const newTour = req.body;
       const result = await collection.insertOne(newTour);
-      res.json(result)
-    } )
+      res.json(result);
+    });
     //Delete API - Delete Tour
-    app.delete("/alltour/:id", async (req, res) =>{
+    app.delete("/alltour/:id", async (req, res) => {
       const id = req.params.id;
-      const query = {_id: ObjectId(id)};
-      const result = await collection.deleteOne(query)
-      res.json(result)
-    })
+      const query = { _id: ObjectId(id) };
+      const result = await collection.deleteOne(query);
+      res.json(result);
+    });
 
-
-    console.log('Connected');
+    // POST API -  Add Order
+    app.post("/orders", async (req, res) => {
+      const order = req.body;
+      // const options = { ordered: true };
+      const result = await orderCollection.insertOne(order);
+      res.json(result);
+      // console.log(req.body);
+    });
+    console.log("Connected");
   } finally {
     // await client.close();
   }
