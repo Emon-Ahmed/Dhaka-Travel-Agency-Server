@@ -21,6 +21,7 @@ async function run() {
     const database = client.db("DhakaTravelAgencyDB");
     const collection = database.collection("tour");
     const orderCollection = database.collection("orders");
+    const adminCollection = database.collection("admin");
 
     // GET API - View ONE
     app.get("/alltour/:id", async (req, res) => {
@@ -67,11 +68,35 @@ async function run() {
     // POST API -  Add Order
     app.post("/orders", async (req, res) => {
       const order = req.body;
-      // const options = { ordered: true };
       const result = await orderCollection.insertOne(order);
       res.json(result);
-      // console.log(req.body);
     });
+    // POST API -  Add Admin
+    app.post("/addadmin", async (req, res) => {
+      const admin = req.body.email;
+      const adminCheck = await adminCollection.find({ admin: admin }).toArray();
+      if (adminCheck.length !== 0) {
+        res.json({ success: "OK" });
+      } else {
+        const result = await adminCollection.insertOne({ admin });
+        res.json({ success: "Inserted" });
+      }
+    });
+
+    //GET API - Admin
+    app.get("/admin/:email", async (req, res) => {
+      const email = req.params.email;
+      const admin = adminCollection.find({ admin: email });
+      const result = await admin.toArray();
+      console.log(result);
+      if (result.length > 0) {
+        res.send({ success: "Ok" });
+      }else{
+        res.send({ error: "Normal User" });
+      }
+      // res.send(result);
+    });
+
     console.log("Connected");
   } finally {
     // await client.close();
