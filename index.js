@@ -91,13 +91,11 @@ async function run() {
       console.log(result);
       if (result.length > 0) {
         res.send({ success: "Ok" });
-      }else{
+      } else {
         res.send({ error: "Normal User" });
       }
       // res.send(result);
     });
-
-    console.log("Connected");
   } finally {
     // await client.close();
   }
@@ -107,7 +105,6 @@ run().catch(console.dir);
 app.get("/", (req, res) => {
   res.send("Hello NODE!");
 });
-
 app.listen(port, () => {
-  console.log(`Example app listening at http://localhost:${port}`);
+  console.log(`Example app listening at ${port}`);
 });
