@@ -51,19 +51,29 @@ async function run() {
       res.send(result);
     });
 
+    //GET API - MY Order - USer
+    app.get("/orderlist", async (req, res) => {
+      const order = orderCollection.find({});
+      const result = await order.toArray();
+      res.send(result);
+    });
+
     // POST API - Add Tour
     app.post("/addtour", async (req, res) => {
       const newTour = req.body;
       const result = await collection.insertOne(newTour);
       res.json(result);
     });
+
     //Delete API - Delete Tour
-    app.delete("/alltour/:id", async (req, res) => {
+    app.delete("/orderlist/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: ObjectId(id) };
       const result = await collection.deleteOne(query);
       res.json(result);
+      console.log(id);
     });
+
 
     // POST API -  Add Order
     app.post("/orders", async (req, res) => {
